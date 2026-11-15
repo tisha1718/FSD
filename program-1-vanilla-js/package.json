@@ -1,0 +1,12 @@
+{
+  "name": "program-1-vanilla-js",
+  "version": "1.0.0",
+  "description": "PARKIFY - Program 1: Vanilla JavaScript Implementation (CO1, CO2)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": ["vanilla-js", "dom", "fetch-api", "async-await"],
+  "author": "PARKIFY Team",
+  "license": "MIT"
+}

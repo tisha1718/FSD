@@ -1,0 +1,47 @@
+[
+  {
+    "id": "NODE-3127",
+    "slotNumber": "A-06",
+    "location": "Central Park Bay",
+    "driverName": "TISHA",
+    "vehicleNumber": "DL-01-AB-1234",
+    "vehicleType": "BIKE",
+    "date": "2026-11-15",
+    "startTime": "12:00",
+    "durationHours": 2,
+    "hourlyRate": 50,
+    "totalAmount": 100,
+    "status": "CONFIRMED",
+    "createdAt": "2026-11-15T17:33:01.142Z"
+  },
+  {
+    "id": "BK-1001",
+    "slotNumber": "A-01",
+    "location": "Cyber Heights Hub",
+    "driverName": "Amit Verma",
+    "vehicleNumber": "DL-01-XY-9876",
+    "vehicleType": "CAR",
+    "date": "2026-11-16",
+    "startTime": "10:00",
+    "durationHours": 3,
+    "hourlyRate": 60,
+    "totalAmount": 180,
+    "status": "CONFIRMED",
+    "createdAt": "2026-11-15T10:00:00.000Z"
+  },
+  {
+    "id": "BK-1002",
+    "slotNumber": "EV-02",
+    "location": "Phoenix City Hub",
+    "driverName": "Sneha Roy",
+    "vehicleNumber": "MH-02-CD-4321",
+    "vehicleType": "EV",
+    "date": "2026-11-16",
+    "startTime": "11:30",
+    "durationHours": 2,
+    "hourlyRate": 85,
+    "totalAmount": 170,
+    "status": "CONFIRMED",
+    "createdAt": "2026-11-15T11:00:00.000Z"
+  }
+]

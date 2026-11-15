@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PARKIFY | Core Node.js HTTP Server & CRUD (CO4)</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="navbar">
+        <div class="nav-content">
+            <div class="brand">
+                <span class="badge">P3</span>
+                <div>
+                    <h2>PARKIFY Node.js Core</h2>
+                    <p>Native HTTP &bull; File System &bull; EventEmitter &bull; Streams (No Express)</p>
+                </div>
+            </div>
+            <div class="status-pill">
+                <span class="live-indicator"></span> HTTP Port 3003 Active
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- CRUD Architecture Card -->
+        <div class="arch-card">
+            <h3>CO4 Implementation Overview</h3>
+            <div class="arch-grid">
+                <div class="arch-box">
+                    <strong>http.createServer</strong>
+                    <span>Pure low-level request/response lifecycle &amp; URL routing without framework abstraction.</span>
+                </div>
+                <div class="arch-box">
+                    <strong>fs / fs.promises</strong>
+                    <span>Non-blocking file persistence to data/bookings.json with atomic reads and writes.</span>
+                </div>
+                <div class="arch-box">
+                    <strong>EventEmitter</strong>
+                    <span>Event-driven audit logging for booking:created, updated, and deleted events.</span>
+                </div>
+                <div class="arch-box">
+                    <strong>Node.js Streams</strong>
+                    <span>fs.createReadStream().pipe() for static assets and streaming live audit logs.</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-split">
+            <!-- Form: Create / Update -->
+            <section class="card form-card">
+                <h3 id="form-heading">Create New Booking Record (POST)</h3>
+                <form id="booking-crud-form">
+                    <input type="hidden" id="editing-id">
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Slot Bay Number *</label>
+                            <input type="text" id="slot-number" placeholder="e.g. A-05" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Vehicle Type</label>
+                            <select id="vehicle-type">
+                                <option value="CAR">Car (4-Wheeler)</option>
+                                <option value="BIKE">Bike (2-Wheeler)</option>
+                                <option value="EV">EV Charger Bay</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Driver Name *</label>
+                            <input type="text" id="driver-name" placeholder="John Doe" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Vehicle Plate No. *</label>
+                            <input type="text" id="vehicle-number" placeholder="DL-01-AB-1234" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Date *</label>
+                            <input type="date" id="booking-date" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Duration (Hours) *</label>
+                            <input type="number" id="duration-hours" min="1" max="24" value="2" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Hourly Rate (₹)</label>
+                            <input type="number" id="hourly-rate" value="50" min="20" max="200" required>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" id="btn-save" class="btn btn-primary">Submit Record (POST)</button>
+                        <button type="button" id="btn-cancel-edit" class="btn btn-secondary" style="display:none;">Cancel Edit</button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Audit Stream Logs -->
+            <section class="card logs-card">
+                <div class="logs-header">
+                    <h3>Streaming Audit Log (Streams API)</h3>
+                    <button id="btn-refresh-logs" class="btn btn-sm btn-outline">Refresh Stream</button>
+                </div>
+                <pre id="audit-log-terminal" class="terminal-box">Listening to server events...</pre>
+            </section>
+        </div>
+
+        <!-- CRUD Records Table (GET, PUT, DELETE) -->
+        <section class="card table-card">
+            <div class="table-header">
+                <div>
+                    <h3>JSON File Records (GET /api/bookings)</h3>
+                    <p>Persisted asynchronously to <code>data/bookings.json</code></p>
+                </div>
+                <div class="table-controls">
+                    <input type="text" id="table-search" placeholder="Search driver or slot...">
+                    <button id="btn-reload-table" class="btn btn-sm btn-outline">Reload Data</button>
+                </div>
+            </div>
+
+            <div class="table-wrap">
+                <table class="crud-table">
+                    <thead>
+                        <tr>
+                            <th>Record ID</th>
+                            <th>Slot &amp; Type</th>
+                            <th>Driver &amp; Plate</th>
+                            <th>Date &amp; Duration</th>
+                            <th>Billing (₹)</th>
+                            <th>Status</th>
+                            <th>CRUD Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="crud-tbody">
+                        <tr><td colspan="7" class="text-center">Loading JSON data from Node HTTP server...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <div id="toast-box"></div>
+
+    <script src="client.js"></script>
+</body>
+</html>

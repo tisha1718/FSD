@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PARKIFY | Smart Parking Slot Booking (Vanilla JS - CO1, CO2)</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Top Navigation Bar -->
+    <header class="navbar">
+        <div class="nav-container">
+            <div class="brand">
+                <span class="brand-badge">P1</span>
+                <div class="brand-text">
+                    <h1>PARKIFY</h1>
+                    <p class="tagline">Smart Parking Booking &bull; CO1 &amp; CO2 Project</p>
+                </div>
+            </div>
+            <nav class="nav-links">
+                <a href="#search-section" class="active">Find Slots</a>
+                <a href="#slots-section">Live Grid</a>
+                <a href="#booking-section">Book Now</a>
+                <a href="#records-section">My Bookings</a>
+            </nav>
+            <div class="status-indicator">
+                <span class="status-dot"></span>
+                <span id="api-status">API Connected</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <!-- Hero & Search Section -->
+        <section class="hero-banner" id="search-section">
+            <div class="hero-text">
+                <h2>Find &amp; Reserve Parking In Real-Time</h2>
+                <p>Pure Vanilla JavaScript (DOM, Fetch API, Event Handling &amp; Async/Await)</p>
+            </div>
+
+            <!-- Search and Filter Form -->
+            <div class="search-card">
+                <form id="filter-form" class="filter-grid">
+                    <div class="form-group">
+                        <label for="search-input">Search Location</label>
+                        <input type="text" id="search-input" placeholder="e.g. Metro Hub, Airport, Tech Park...">
+                    </div>
+                    <div class="form-group">
+                        <label for="vehicle-filter">Vehicle Type</label>
+                        <select id="vehicle-filter">
+                            <option value="ALL">All Vehicles</option>
+                            <option value="FOUR_WHEELER">4-Wheeler (Car/SUV)</option>
+                            <option value="TWO_WHEELER">2-Wheeler (Bike)</option>
+                            <option value="EV">Electric Vehicle (EV)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="status-filter">Slot Availability</label>
+                        <select id="status-filter">
+                            <option value="ALL">All Slots</option>
+                            <option value="AVAILABLE">Available Only</option>
+                            <option value="BOOKED">Booked Only</option>
+                        </select>
+                    </div>
+                    <div class="form-group action-group">
+                        <button type="button" id="reset-filter-btn" class="btn btn-secondary">Reset</button>
+                        <button type="submit" id="apply-filter-btn" class="btn btn-primary">Search</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Dynamic Parking Locations Listing -->
+        <section class="locations-section">
+            <div class="section-header">
+                <div>
+                    <h3>Select Parking Hub</h3>
+                    <p>Choose a verified parking destination to load interactive slot bay</p>
+                </div>
+                <div class="stats-counter" id="locations-count">Loading hubs...</div>
+            </div>
+            <div id="locations-grid" class="locations-grid">
+                <!-- Dynamically populated via app.js -->
+            </div>
+        </section>
+
+        <!-- Interactive Slot Matrix -->
+        <section class="slots-section" id="slots-section">
+            <div class="section-header">
+                <div>
+                    <h3 id="current-location-title">Select a Location Above</h3>
+                    <p id="current-location-address">Real-time occupancy map with multi-tier slot rates</p>
+                </div>
+                <div class="slot-legend">
+                    <span class="legend-item"><span class="legend-box available"></span> Available</span>
+                    <span class="legend-item"><span class="legend-box selected"></span> Selected</span>
+                    <span class="legend-item"><span class="legend-box booked"></span> Occupied</span>
+                </div>
+            </div>
+
+            <div id="slots-matrix" class="slots-matrix">
+                <div class="empty-state">Please select a parking location above to view available slots.</div>
+            </div>
+        </section>
+
+        <!-- Booking Form Section -->
+        <section class="booking-section" id="booking-section">
+            <div class="booking-card">
+                <div class="booking-card-header">
+                    <h3>Confirm Slot Reservation</h3>
+                    <p>Strict input validation and dynamic price calculation</p>
+                </div>
+
+                <form id="booking-form" novalidate>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="slot-number-display">Selected Slot</label>
+                            <input type="text" id="slot-number-display" readonly placeholder="Pick a slot from the grid above" required>
+                            <input type="hidden" id="selected-slot-id">
+                            <input type="hidden" id="selected-location-id">
+                        </div>
+                        <div class="form-group">
+                            <label for="rate-per-hour-display">Hourly Rate (₹)</label>
+                            <input type="text" id="rate-per-hour-display" readonly placeholder="₹0 / hr">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="driver-name">Driver Full Name *</label>
+                            <input type="text" id="driver-name" placeholder="John Doe" required minlength="3">
+                            <small class="error-msg" id="name-error"></small>
+                        </div>
+                        <div class="form-group">
+                            <label for="driver-phone">Mobile Number *</label>
+                            <input type="tel" id="driver-phone" placeholder="9876543210" required pattern="[0-9]{10}">
+                            <small class="error-msg" id="phone-error"></small>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="vehicle-number">Vehicle Registration Number *</label>
+                            <input type="text" id="vehicle-number" placeholder="MH-12-AB-1234" required style="text-transform: uppercase;">
+                            <small class="error-msg" id="vehicle-error"></small>
+                        </div>
+                        <div class="form-group">
+                            <label for="vehicle-type-select">Vehicle Category *</label>
+                            <select id="vehicle-type-select" required>
+                                <option value="FOUR_WHEELER">4-Wheeler (Car / SUV)</option>
+                                <option value="TWO_WHEELER">2-Wheeler (Motorcycle)</option>
+                                <option value="EV">Electric Vehicle (EV Charger Bay)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="booking-date">Date *</label>
+                            <input type="date" id="booking-date" required>
+                            <small class="error-msg" id="date-error"></small>
+                        </div>
+                        <div class="form-group">
+                            <label for="start-time">Entry Time *</label>
+                            <input type="time" id="start-time" required>
+                            <small class="error-msg" id="time-error"></small>
+                        </div>
+                        <div class="form-group">
+                            <label for="duration-hours">Duration (Hours) *</label>
+                            <input type="number" id="duration-hours" min="1" max="24" value="2" required>
+                            <small class="error-msg" id="duration-error"></small>
+                        </div>
+                    </div>
+
+                    <!-- Live Bill Summary -->
+                    <div class="bill-summary">
+                        <div class="bill-row">
+                            <span>Base Duration:</span>
+                            <span id="summary-duration">2 Hours</span>
+                        </div>
+                        <div class="bill-row">
+                            <span>Applicable Hourly Rate:</span>
+                            <span id="summary-rate">₹50 / hr</span>
+                        </div>
+                        <div class="bill-row total">
+                            <span>Estimated Total:</span>
+                            <span id="summary-total">₹100</span>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="submit-booking-btn" class="btn btn-primary btn-block">
+                        <span class="btn-text">Confirm &amp; Generate Booking Pass</span>
+                        <span class="btn-loader" style="display: none;">Processing...</span>
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Confirmed Bookings Section -->
+        <section class="records-section" id="records-section">
+            <div class="section-header">
+                <div>
+                    <h3>Active Parking Passes</h3>
+                    <p>Recent bookings saved in memory &amp; verified through HTTP mock responses</p>
+                </div>
+                <button id="clear-records-btn" class="btn btn-sm btn-outline">Clear History</button>
+            </div>
+
+            <div id="bookings-table-container" class="table-responsive">
+                <table class="bookings-table">
+                    <thead>
+                        <tr>
+                            <th>Pass ID</th>
+                            <th>Location &amp; Slot</th>
+                            <th>Driver &amp; Vehicle</th>
+                            <th>Schedule</th>
+                            <th>Duration &amp; Amount</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bookings-tbody">
+                        <tr>
+                            <td colspan="7" class="text-center py-4">No active reservations found. Select a slot and book above.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- Notification Toast Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <footer class="footer">
+        <p>&copy; 2026 PARKIFY &bull; Program 1: Vanilla JavaScript Implementation (CO1: HTML/CSS, CO2: Client-side JS &amp; Fetch API)</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>

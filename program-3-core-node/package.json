@@ -1,0 +1,13 @@
+{
+  "name": "program-3-core-node",
+  "version": "1.0.0",
+  "description": "PARKIFY - Program 3: Core Node.js HTTP Server, Streams & File System (CO4)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node test-crud.js"
+  },
+  "keywords": ["node-core", "http", "fs", "streams", "eventemitter", "no-express"],
+  "author": "PARKIFY Team",
+  "license": "MIT"
+}
