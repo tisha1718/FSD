@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://parkify-backend-5pkz.onrender.com/api/:path*"
+    }
+  ]
+}
